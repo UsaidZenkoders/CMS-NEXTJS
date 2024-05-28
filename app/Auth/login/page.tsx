@@ -2,13 +2,11 @@
 import Link from "next/link";
 import React, { useState } from "react";
 
-const page = () => {
-  const [displayName, setDisplayName] = useState("");
-  const [showPara, setShowPara] = useState(false);
+const Page = () => {
+  const [displayName, setDisplayName] = useState("Teacher");
 
   const handleDisplay = (name: string) => {
     setDisplayName(name);
-    setShowPara(true);
   };
   return (
     <main className="flex flex-col items-center justify-center min-h-screen">
@@ -27,11 +25,10 @@ const page = () => {
             Student
           </button>
         </div>
-        {showPara && (
           <p className="text-center font-semibold text-xl animate-fade-in ">
             Registering as {displayName}
           </p>
-        )}
+     
         <label className="input input-bordered flex items-center gap-6">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -71,4 +68,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
