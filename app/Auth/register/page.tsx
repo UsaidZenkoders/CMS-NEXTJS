@@ -1,23 +1,37 @@
 "use client";
 import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 import "react-toastify/dist/ReactToastify.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
 interface User {
   name: string;
   emial: string;
   password: string;
 }
+
 const Page = () => {
+  const router = useRouter();
   const [displayName, setDisplayName] = useState("Teacher");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [token, setToken] = useState("");
+  const [role, setRole] = useState("admin");
   const [isCompleted, setIsCompleted] = useState(false);
+  const [message, setMessage] = useState("");
   const [result, setResults] = useState<User[]>([]);
 
   const handleDisplay = (name: string) => {
     setDisplayName(name);
+    if (name === "Teacher") {
+      setRole("admin");
+      console.log(role);
+    } else {
+      setRole("student");
+      console.log(role);
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -27,6 +41,7 @@ const Page = () => {
       name,
       email,
       password,
+      role,
     };
 
     if (!name || !email || !password) {
@@ -35,7 +50,7 @@ const Page = () => {
     }
 
     try {
-      const res = await fetch("/api/submit", {
+      const res = await fetch("http://localhost:3100/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,14 +61,22 @@ const Page = () => {
       if (!res.ok) {
         throw new Error("Failed to submit data");
       }
+      console.log(userData);
 
       const result = await res.json();
       setResults(result);
+      console.log(result)
+      
+      setToken(result.accessToken);
+      console.log(token);
+      localStorage.setItem("accessToken", token);
       setIsCompleted(true);
-      toast.success("Submitted Successfully");
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("An error occurred while submitting");
+      setMessage(result.InsertedUser.message);
+      console.log(message);
+      toast.success(message);
+      // router.push("/courses")
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 
