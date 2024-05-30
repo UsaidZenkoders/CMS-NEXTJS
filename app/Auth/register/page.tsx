@@ -10,13 +10,14 @@ interface User {
   emial: string;
   password: string;
 }
+
 const Page = () => {
+  const router = useRouter();
   const [displayName, setDisplayName] = useState("Teacher");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role,setRole]=useState("admin")
-const router=useRouter()
   const handleDisplay = (name: string) => {
     setDisplayName(name);
     if (name === "Teacher") {
