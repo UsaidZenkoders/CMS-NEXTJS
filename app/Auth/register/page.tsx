@@ -3,6 +3,8 @@ import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 interface User {
   name: string;
   emial: string;
@@ -13,11 +15,16 @@ const Page = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [result, setResults] = useState<User[]>([]);
-
+  const [role,setRole]=useState("admin")
+const router=useRouter()
   const handleDisplay = (name: string) => {
     setDisplayName(name);
+    if (name === "Teacher") {
+      setRole("admin")
+    }
+    else {
+      setRole("student")
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -27,34 +34,23 @@ const Page = () => {
       name,
       email,
       password,
+      role
     };
-
-    if (!name || !email || !password) {
-      toast.error("All fields are required");
-      return;
-    }
-
     try {
-      const res = await fetch("/api/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to submit data");
+      const res = await axios.post("http://localhost:3100/auth/register", userData)
+      const accessToken = res.data.accessToken
+      localStorage.setItem("accessToken", accessToken)
+      if (res.status === 200 && role === "admin") {
+        router.push("/courses")    
       }
-
-      const result = await res.json();
-      setResults(result);
-      setIsCompleted(true);
-      toast.success("Submitted Successfully");
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("An error occurred while submitting");
+      else if (res.status === 200 && role === "student") {
+        router.push("/enrolments")
+      }
+    } catch (error:any) {
+      toast.error(error.message)
     }
+   
+   
   };
 
   return (

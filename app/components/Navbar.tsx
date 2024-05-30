@@ -26,9 +26,9 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar bg-base-100">
+    <div className="navbar bg-gradient-to-r from-custom-white via-custom-gray-light to-custom-gray text-black">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">COURSE MANAGEMENT SYSTEM</a>
+        <a className="text-lg text-black font-extrabold">CMS</a>
       </div>
       <div className="flex-none gap-2">
         <div className="dropdown dropdown-end">
@@ -40,7 +40,7 @@ const Navbar = () => {
           >
             <div className="w-10 rounded-full">
               <Image
-                alt="Tailwind CSS Navbar component"
+                alt="User avatar"
                 src={UserImage}
                 width={30}
                 height={30}
