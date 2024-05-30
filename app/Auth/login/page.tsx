@@ -37,6 +37,7 @@ const Page = () => {
         toast.error("An error occured ")
       }
       localStorage.setItem("accessToken", accessToken)
+      localStorage.setItem("role",role)
       if (res.status === 200 && role === "admin") {
         router.push("/courses")
 
@@ -67,7 +68,7 @@ const Page = () => {
           </button>
         </div>
           <p className="text-center font-semibold text-xl animate-fade-in ">
-            Registering as {displayName}
+            Logging as {displayName}
           </p>
      
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -112,11 +113,9 @@ const Page = () => {
               required
             />
           </label>
-          <button type="submit" className="btn btn-neutral px-8 text-lg">
-            Register
-          </button>
+         
+        <button className="btn btn-neutral px-8 text-lg" type="submit">Login</button>
         </form>
-        <button className="btn btn-neutral px-8 text-lg">Login</button>
         <p className="my-1">
           Dont have an account?{" "}
           <Link className="text-blue-500 text-center " href="/Auth/register">

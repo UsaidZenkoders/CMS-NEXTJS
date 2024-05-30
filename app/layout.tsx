@@ -17,11 +17,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="winter">
+    <html lang="en" data-theme="winter" className="">
         <body className={`${inter.className} min-h-screen bg-gradient-to-r from-custom-white via-custom-gray-light to-custom-gray text-black`}>
       <Navbar/>
         {children}
-        <Footer/>
+        {/* <Footer/> */}
       </body>
       
       </html>

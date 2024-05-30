@@ -41,10 +41,12 @@ const Page = () => {
       const res = await axios.post("http://localhost:3100/auth/register", userData)
       const accessToken = res.data.accessToken
       localStorage.setItem("accessToken", accessToken)
-      if (res.status === 200 && role === "admin") {
+      localStorage.setItem("role", role)
+
+      if (res.status === 201 && role === "admin") {
         router.push("/courses")    
       }
-      else if (res.status === 200 && role === "student") {
+      else if (res.status === 201 && role === "student") {
         router.push("/enrolments")
       }
     } catch (error:any) {

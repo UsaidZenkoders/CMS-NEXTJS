@@ -11,11 +11,9 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
       const storedToken = localStorage.getItem('accessToken');
-      setToken(storedToken);
-    }
-  }, []);
+      setToken(storedToken); 
+  }, [token]);
 
   const handleProfileClicked = () => {
     if (!token) {
