@@ -1,34 +1,26 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
-const config = {
-  darkMode: ["class"],
+const config: Config = {
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
-  prefix: "",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
       backgroundImage: {
         'gradient-to-r': 'linear-gradient(to right, var(--tw-gradient-stops))',
       },
       colors: {
-        'custom-white': '#f8f9fa', // Whitish color
+       'custom-white': '#f8f9fa', // Whitish color
         'custom-gray-light': '#e0e0e0', // Light gray color
         'custom-gray': '#b0b0b0', // Gray color
       },
     },
   },
-  plugins: [require("tailwindcss-animate"),require("daisyui")],
-} satisfies Config
-
-export default config
+  plugins: [require('daisyui')],
+  daisyui: {
+    themes: ["winter"],
+  },
+};
+export default config;

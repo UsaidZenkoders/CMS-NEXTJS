@@ -15,7 +15,7 @@ const Page = () => {
   const [courses, setCourses] = useState<Courses[]>([]);
   const [currentCourse, setCurrentCourse] = useState<Courses | null>(null);
   const [newCourse, setNewCourse] = useState<Courses>({ course_name: '', course_code: '', course_description: '' });
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage?.getItem('accessToken');
 
   useEffect(() => {
     const getCourseList = async () => {
@@ -43,7 +43,7 @@ const Page = () => {
         }
       });
       setCourses([...courses, result.data]);
-      document.getElementById('add_course_modal')?.close();
+      document.getElementById('add_course_modal')?.removeAttribute('open'); // Close the modal
       toast.success('Course added successfully!');
       setNewCourse({ course_name: '', course_code: '', course_description: '' });
     } catch (error: any) {
@@ -60,7 +60,7 @@ const Page = () => {
           }
         });
         setCourses(courses.map(course => (course.course_code === currentCourse.course_code ? currentCourse : course)));
-        document.getElementById('update_course_modal')?.close();
+        document.getElementById('update_course_modal')?.removeAttribute('open'); // Close the modal
         toast.success('Course updated successfully!');
       }
     } catch (error: any) {
@@ -89,10 +89,10 @@ const Page = () => {
       <ToastContainer autoClose={1000} />
       <h1 className="text-2xl text-center py-2 font-extrabold">COURSES LIST</h1>
       <div className="flex justify-center space-x-4">
-        <button className="btn btn-primary" onClick={() => document.getElementById('add_course_modal')?.showModal()}>Add Course</button>
+        <button className="btn btn-primary" onClick={() => document.getElementById('add_course_modal')?.setAttribute('open', 'true')}>Add Course</button>
         <button className="btn btn-secondary" onClick={() => {
           if (currentCourse) {
-            document.getElementById('update_course_modal')?.showModal();
+            document.getElementById('update_course_modal')?.setAttribute('open', 'true');
           } else {
             toast.info('Please select a course to update.');
           }
@@ -165,7 +165,7 @@ const Page = () => {
           </div>
           <div className="modal-action">
             <button className="btn btn-primary" onClick={handleAddCourse}>Add</button>
-            <button className="btn" onClick={() => document.getElementById('add_course_modal')?.close()}>Cancel</button>
+            <button className="btn" onClick={() => document.getElementById('add_course_modal')?.removeAttribute('open')}>Cancel</button>
           </div>
         </div>
       </dialog>
@@ -199,7 +199,7 @@ const Page = () => {
             </div>
             <div className="modal-action">
               <button className="btn btn-primary" onClick={handleUpdateCourse}>Update</button>
-              <button className="btn" onClick={() => document.getElementById('update_course_modal')?.close()}>Cancel</button>
+              <button className="btn" onClick={() => document.getElementById('update_course_modal')?.removeAttribute('open')}>Cancel</button>
             </div>
           </div>
         </dialog>
