@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { CourseProvider } from "./Context/CourseContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,9 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="winter" className="">
         <body className={`${inter.className} min-h-screen bg-gradient-to-r from-custom-white via-custom-gray-light to-custom-gray text-black`}>
+          <CourseProvider>
+
       <Navbar/>
         {children}
         {/* <Footer/> */}
+          </CourseProvider>
       </body>
       
       </html>

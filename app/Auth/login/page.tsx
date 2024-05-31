@@ -38,6 +38,7 @@ const Page = () => {
       }
       localStorage.setItem("accessToken", accessToken)
       localStorage.setItem("role",role)
+      localStorage.setItem("email",email)
       if (res.status === 200 && role === "admin") {
         router.push("/courses")
 

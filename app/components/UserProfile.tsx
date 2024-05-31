@@ -12,7 +12,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ token }) => {
   const [logout,setLogout]=useState(false)
   const router=useRouter()
   const handleLogout = () => {
-    localStorage.setItem("accessToken", "");
+   
+    localStorage.removeItem("accessToken")
+    localStorage.removeItem("role")
+    localStorage.removeItem("email")
+
+
     router.push("/Auth/login")
     setLogout(true)
     toast.info("logged out successfully")
