@@ -4,7 +4,6 @@ import { toast } from 'react-toastify';
 
 const CourseList = () => {
     const {isLoading,courses,getCourseList,setCurrentCourse}=useCourseContext()
-    const token = localStorage.getItem("accessToken");
 
     useEffect(() => {
       
@@ -13,14 +12,14 @@ const CourseList = () => {
         }, 2000);
         return () => clearTimeout(redirectTimeout);
       
-    }, []);
+    }, [getCourseList]);
   return (
     isLoading ? (
         <div className="flex items-center justify-center h-screen">
           <span className="loading loading-bars loading-lg"></span>
         </div>
       ) : courses.length > 0 ? (
-        <table className="mx-auto mt-4 rounded-lg overflow-hidden w-fit">
+        <table className="mx-auto mt-4 rounded-lg overflow-hidden w-fit mb-6">
           <thead className="bg-gray-200">
             <tr>
               <th className="py-2 px-4 text-xl font-semibold">Course Code</th>

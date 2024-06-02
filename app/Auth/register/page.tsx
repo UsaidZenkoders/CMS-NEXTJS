@@ -5,6 +5,8 @@ import "react-toastify/dist/ReactToastify.css";
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
+import Cookies from "js-cookie"
 interface User {
   name: string;
   emial: string;
@@ -40,9 +42,12 @@ const Page = () => {
     try {
       const res = await axios.post("http://localhost:3100/auth/register", userData)
       const accessToken = res.data.accessToken
-      localStorage.setItem("accessToken", accessToken)
-      localStorage.setItem("role", role)
-      localStorage.setItem("email",email)
+      if (accessToken) {
+        
+        Cookies.set("accessToken", accessToken, { expires: 7, secure: true });
+        Cookies.set("role", role, { expires: 7, secure: true });
+        Cookies.set("email", email, { expires: 7, secure: true });
+      }
 
       if (res.status === 201 && role === "admin") {
         router.push("/courses")    
@@ -50,8 +55,18 @@ const Page = () => {
       else if (res.status === 201 && role === "student") {
         router.push("/enrolments")
       }
-    } catch (error:any) {
-      toast.error(error.message)
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<any>;
+        if (axiosError.response?.status === 401) {
+          toast.error(axiosError.response.data.message);
+          
+        } else {
+          toast.error("An error occurred while registering");
+        }
+      } else {
+        toast.error("An error occured while registering");
+      }
     }
    
    

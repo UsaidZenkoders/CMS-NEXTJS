@@ -19,15 +19,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="winter" className="">
-        <body className={`${inter.className} min-h-screen bg-gradient-to-r from-custom-white via-custom-gray-light to-custom-gray text-black`}>
-          <CourseProvider>
-
-      <Navbar/>
-        {children}
-        {/* <Footer/> */}
-          </CourseProvider>
+      <body
+        className={`${inter.className} min-h-screen bg-gradient-to-r from-custom-white via-custom-gray-light to-custom-gray text-black`}
+      >
+        <CourseProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </CourseProvider>
       </body>
-      
-      </html>
+    </html>
   );
 }

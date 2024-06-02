@@ -1,10 +1,11 @@
-"use client";
+'use client';
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useCourseContext } from "../Context/CourseContext";
 import CourseList from "./CourseList";
+import Cookies from "js-cookie";
 
 interface Courses {
   course_name: string;
@@ -13,25 +14,26 @@ interface Courses {
 }
 
 const Page = () => {
-  const {isLoading,courses,setCourses,getCourseList,currentCourse,setCurrentCourse}=useCourseContext()
+  const { courses, setCourses, currentCourse, setCurrentCourse } = useCourseContext();
   const [newCourse, setNewCourse] = useState<Courses>({
     course_name: "",
     course_code: "",
     description: "",
   });
-
-  const token = localStorage.getItem("accessToken");
+  const [token, setToken] = useState<string | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   useEffect(() => {
-    
-      const redirectTimeout = setTimeout(() => {
-        getCourseList();
-      }, 2000);
-      return () => clearTimeout(redirectTimeout);
-    
+    const token = Cookies.get("accessToken")
+    setToken(token?? null)
   }, []);
 
   const handleAddCourse = async () => {
+    if (!token) {
+      toast.error("No access token found");
+      return;
+    }
     try {
       const result = await axios.post(
         "http://localhost:3100/course",
@@ -43,11 +45,11 @@ const Page = () => {
         }
       );
       setCourses([...courses, newCourse]);
-      document.getElementById("add_course_modal")?.removeAttribute("open");
+      setIsAddModalOpen(false);
       toast.success("Course added successfully!");
       setNewCourse({ course_name: "", course_code: "", description: "" });
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error("API Error");
     }
   };
 
@@ -70,7 +72,7 @@ const Page = () => {
               : course
           )
         );
-        document.getElementById("update_course_modal")?.removeAttribute("open");
+        setIsUpdateModalOpen(false);
         toast.success("Course updated successfully!");
       }
     } catch (error: any) {
@@ -79,16 +81,14 @@ const Page = () => {
   };
 
   const handleDeleteCourse = async (course_code: string) => {
-    if (confirm(`Are you sure you want to delete ${course_code} ?`)) {
+    if (confirm(`Are you sure you want to delete ${course_code}?`)) {
       try {
         await axios.delete(`http://localhost:3100/course/${course_code}`, {
           headers: {
             Authorization: token,
           },
         });
-        setCourses(
-          courses.filter((course) => course.course_code !== course_code)
-        );
+        setCourses(courses.filter((course) => course.course_code !== course_code));
         toast.success("Course deleted successfully!");
       } catch (error: any) {
         toast.error(error.message);
@@ -99,25 +99,20 @@ const Page = () => {
   return (
     <div>
       <ToastContainer autoClose={1000} />
-      <h1 className="text-2xl text-center py-2 font-extrabold">COURSES LIST</h1>
-      <div className="flex justify-center space-x-4">
+      <h1 className="text-2xl text-center py-2 font-extrabold mb-6">COURSES LIST</h1>
+      <div className="flex justify-center space-x-4 mb-11">
         <button
           className="btn btn-primary"
-          onClick={() =>
-            document
-              .getElementById("add_course_modal")
-              ?.setAttribute("open", "true")
-          }
+          onClick={() => setIsAddModalOpen(true)}
         >
           Add Course
         </button>
         <button
           className="btn btn-secondary"
+          disabled={courses.length < 1}
           onClick={() => {
             if (currentCourse) {
-              document
-                .getElementById("update_course_modal")
-                ?.setAttribute("open", "true");
+              setIsUpdateModalOpen(true);
             } else {
               toast.info("Please select a course to update.");
             }
@@ -127,8 +122,8 @@ const Page = () => {
         </button>
         <button
           className="btn btn-danger"
+          disabled={courses.length < 1}
           onClick={() => {
-            console.log(currentCourse);
             if (currentCourse) {
               handleDeleteCourse(currentCourse.course_code);
             } else {
@@ -139,63 +134,55 @@ const Page = () => {
           Delete Course
         </button>
       </div>
-     <CourseList/>
-      <dialog
-        id="add_course_modal"
-        className="modal modal-bottom sm:modal-middle"
-      >
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Add Course</h3>
-          <div className="py-4">
-            <input
-              type="text"
-              placeholder="Course Code"
-              className="input input-bordered w-full mb-4"
-              value={newCourse.course_code}
-              onChange={(e) =>
-                setNewCourse({ ...newCourse, course_code: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Course Name"
-              className="input input-bordered w-full mb-4"
-              value={newCourse.course_name}
-              onChange={(e) =>
-                setNewCourse({ ...newCourse, course_name: e.target.value })
-              }
-            />
-            <textarea
-              placeholder="Course Description"
-              className="textarea textarea-bordered w-full"
-              value={newCourse.description}
-              onChange={(e) =>
-                setNewCourse({ ...newCourse, description: e.target.value })
-              }
-            ></textarea>
+      <CourseList />
+      {isAddModalOpen && (
+        <dialog className="modal modal-bottom sm:modal-middle" open>
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Add Course</h3>
+            <div className="py-4">
+              <input
+                type="text"
+                placeholder="Course Code"
+                className="input input-bordered w-full mb-4"
+                value={newCourse.course_code}
+                onChange={(e) =>
+                  setNewCourse({ ...newCourse, course_code: e.target.value })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Course Name"
+                className="input input-bordered w-full mb-4"
+                value={newCourse.course_name}
+                onChange={(e) =>
+                  setNewCourse({ ...newCourse, course_name: e.target.value })
+                }
+              />
+              <textarea
+                placeholder="Course Description"
+                className="textarea textarea-bordered w-full"
+                value={newCourse.description}
+                onChange={(e) =>
+                  setNewCourse({ ...newCourse, description: e.target.value })
+                }
+              ></textarea>
+            </div>
+            <div className="modal-action">
+              <button className="btn btn-primary" onClick={handleAddCourse}>
+                Add
+              </button>
+              <button
+                className="btn"
+                onClick={() => setIsAddModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
-          <div className="modal-action">
-            <button className="btn btn-primary" onClick={handleAddCourse}>
-              Add
-            </button>
-            <button
-              className="btn"
-              onClick={() =>
-                document
-                  .getElementById("add_course_modal")
-                  ?.removeAttribute("open")
-              }
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </dialog>
-      {currentCourse && (
-        <dialog
-          id="update_course_modal"
-          className="modal modal-bottom sm:modal-middle"
-        >
+        </dialog>
+      )}
+      {currentCourse && isUpdateModalOpen && (
+        <dialog className="modal modal-bottom sm:modal-middle" open>
           <div className="modal-box">
             <h3 className="font-bold text-lg">Update Course</h3>
             <div className="py-4">
@@ -242,11 +229,7 @@ const Page = () => {
               </button>
               <button
                 className="btn"
-                onClick={() =>
-                  document
-                    .getElementById("update_course_modal")
-                    ?.removeAttribute("open")
-                }
+                onClick={() => setIsUpdateModalOpen(false)}
               >
                 Cancel
               </button>

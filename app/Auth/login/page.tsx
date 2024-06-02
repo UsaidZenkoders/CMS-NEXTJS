@@ -3,7 +3,9 @@ import Link from "next/link";
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import { AxiosError } from "axios";
+import Cookies from "js-cookie";
 
 const Page = () => {
   const [displayName, setDisplayName] = useState("Teacher");
@@ -33,12 +35,13 @@ const Page = () => {
       if (res.status === 200) {
         toast.success("Login successful")
       }
-      else {
-        toast.error("An error occured ")
+      
+      if (accessToken) {
+        
+        Cookies.set("accessToken", accessToken, { expires: 7, secure: true });
+        Cookies.set("role", role, { expires: 7, secure: true });
+        Cookies.set("email", email, { expires: 7, secure: true });
       }
-      localStorage.setItem("accessToken", accessToken)
-      localStorage.setItem("role",role)
-      localStorage.setItem("email",email)
       if (res.status === 200 && role === "admin") {
         router.push("/courses")
 
@@ -47,8 +50,19 @@ const Page = () => {
         router.push("/enrolments")
 
       }
-    } catch (error:any) {
-      toast.error(error.message)
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+      
+        const axiosError = error as AxiosError<any>;
+        if (axiosError.response?.status === 401) {
+          toast.error(axiosError.response.data.message);
+          
+        } else {
+          toast.error("An error occured while signing in ");
+        }
+      } else {
+        toast.error("An error occured while signing in");
+      }
     }
   }
   return (
@@ -124,6 +138,7 @@ const Page = () => {
           </Link>
         </p>
       </div>
+      <ToastContainer autoClose={1000} />
     </main>
   );
 };
