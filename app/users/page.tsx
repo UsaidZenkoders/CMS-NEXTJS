@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { getUsersEnrolments } from "../api/usersApi"; // Import API function
+import { getUsersEnrolments } from "../api/usersApi";
 import {StudentsEnrolments} from "../api/usersApi"
 
 
@@ -14,6 +14,7 @@ const Users = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+      
         const data = await getUsersEnrolments();
         setStudentsEnrolment(data);
         setIsLoading(false);

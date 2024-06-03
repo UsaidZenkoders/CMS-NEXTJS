@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import CourseList from "../courses/CourseList";
 import Image from "next/image";
-import CourseImage from "../assets/course.jpg"
+import CourseImage from "../assets/course.jpg";
 import { AxiosError } from "axios";
 import Cookies from "js-cookie";
 interface Enrolment {

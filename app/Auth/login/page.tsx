@@ -5,58 +5,54 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import { AxiosError } from "axios";
-import Cookies from "js-cookie";
+import { setCookie } from "cookies-next";
 
 const Page = () => {
   const [displayName, setDisplayName] = useState("Teacher");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("admin")
-  const router=useRouter()
+  const [role, setRole] = useState("admin");
+  const router = useRouter();
   const handleDisplay = (name: string) => {
     setDisplayName(name);
     if (name === "Teacher") {
-      setRole("admin")
-    }
-    else {
-      setRole("student")
+      setRole("admin");
+    } else {
+      setRole("student");
     }
   };
-  const handleSubmit = async(e:React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const userData = {
       email,
       password,
-      role
-    }
+      role,
+    };
     try {
-      const res = await axios.post("http://localhost:3100/auth/login", userData)
-      const accessToken = res.data.accessToken
+      const res = await axios.post(
+        "http://localhost:3100/auth/login",
+        userData
+      );
+      const accessToken = res.data.accessToken;
       if (res.status === 200) {
-        toast.success("Login successful")
+        toast.success("Login successfull");
       }
-      
+
       if (accessToken) {
-        
-        Cookies.set("accessToken", accessToken, { expires: 7, secure: true });
-        Cookies.set("role", role, { expires: 7, secure: true });
-        Cookies.set("email", email, { expires: 7, secure: true });
+        setCookie("accessToken", accessToken);
+        setCookie("role", role);
+        setCookie("email", email);
       }
       if (res.status === 200 && role === "admin") {
-        router.push("/courses")
-
-      }
-      else if (res.status === 200 && role === "student") {
-        router.push("/enrolments")
-
+        router.push("/courses");
+      } else if (res.status === 200 && role === "student") {
+        router.push("/enrolments");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-      
         const axiosError = error as AxiosError<any>;
         if (axiosError.response?.status === 401) {
           toast.error(axiosError.response.data.message);
-          
         } else {
           toast.error("An error occured while signing in ");
         }
@@ -64,7 +60,7 @@ const Page = () => {
         toast.error("An error occured while signing in");
       }
     }
-  }
+  };
   return (
     <main className="flex flex-col items-center justify-center min-h-screen">
       <div className="flex flex-col gap-4 p-10 bg-white shadow-2xl rounded-lg">
@@ -82,11 +78,11 @@ const Page = () => {
             Student
           </button>
         </div>
-          <p className="text-center font-semibold text-xl animate-fade-in ">
-            Logging as {displayName}
-          </p>
-     
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <p className="text-center font-semibold text-xl animate-fade-in ">
+          Logging as {displayName}
+        </p>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <label className="input input-bordered flex items-center gap-6">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -128,8 +124,10 @@ const Page = () => {
               required
             />
           </label>
-         
-        <button className="btn btn-neutral px-8 text-lg" type="submit">Login</button>
+
+          <button className="btn btn-neutral px-8 text-lg" type="submit">
+            Login
+          </button>
         </form>
         <p className="my-1">
           Dont have an account?{" "}
@@ -138,7 +136,7 @@ const Page = () => {
           </Link>
         </p>
       </div>
-      <ToastContainer autoClose={1000} />
+      <ToastContainer autoClose={1200} />
     </main>
   );
 };

@@ -7,24 +7,31 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { deleteCookie, getCookie } from "cookies-next";
+import Link from "next/link";
 
 const Navbar = () => {
   const router = useRouter();
-  const [token, setToken] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
-  const [role, setRole] = useState<string | null>(null);
+  // const [token, setToken] = useState<string | null>(null);
+  // const [email, setEmail] = useState<string | null>(null);
+  // const [role, setRole] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [logout, setLogout] = useState(false);
 
-  useEffect(() => {
-    const storedToken = Cookies.get("accessToken");
-    const storedEmail = Cookies.get("email");
-    const storedRole = Cookies.get("role");
+  const token = getCookie("accessToken");
+  const email = getCookie("email");
+  const role = getCookie("role");
 
-    setToken(storedToken ?? null);
-    setEmail(storedEmail ?? null);
-    setRole(storedRole ?? null);
-  }, [token])
+  // console.log({token, email, role})
+  // useEffect(() => {
+  //   const storedToken = getCookie("accessToken");
+  //   const storedEmail = getCookie("email");
+  //   const storedRole = getCookie("role");
+
+  //   setToken(storedToken ?? null);
+  //   setEmail(storedEmail ?? null);
+  //   setRole(storedRole ?? null);
+  // }, [token])
 
   const handleProfileClicked = () => {
     if (!token || !role || !email) {
@@ -34,21 +41,20 @@ const Navbar = () => {
     }
   };
 
-  const handleLogout = () => {
-    Cookies.remove("accessToken");
-    Cookies.remove("email");
-    Cookies.remove("role");
+  // const handleLogout = () => {
+  //   deleteCookie("accessToken");
+  //   deleteCookie("role");
+  //   deleteCookie("accessToken");
 
-    setToken(null); // Reset state immediately
-    setEmail(null);
-    setRole(null);
-    setLogout(true); // Trigger useEffect to update state
+  //   setToken(null);
+  //   setEmail(null);
+  //   setRole(null);
+  //   setLogout(true);
 
-    setIsDropdownOpen(false); // Close dropdown on logout
+  //   setIsDropdownOpen(false);
 
-    // Redirect to login page
-    router.push("/Auth/login");
-  };
+  //   router.push("/Auth/login");
+  // };
 
   return (
     <nav className="bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400 text-black shadow-md mb-8">
@@ -56,22 +62,41 @@ const Navbar = () => {
         <div className="flex items-center">
           <p className="text-2xl font-bold">CMS</p>
         </div>
-        {role === "admin" && (
-          <div className="flex gap-6">
-            <a
-              href="/users"
-              className="text-lg font-bold hover:text-gray-600 transition-colors duration-200"
-            >
-              View Students
-            </a>
-            <a
-              href="/courses"
-              className="text-lg font-bold hover:text-gray-600 transition-colors duration-200"
-            >
-              View Courses
-            </a>
-          </div>
-        )}
+        <div className="flex gap-6">
+          {role === "admin" && (
+            <>
+              <a
+                href="/users"
+                className="text-lg font-bold hover:text-gray-600 transition-colors duration-200"
+              >
+                View Students
+              </a>
+              <a
+                href="/courses"
+                className="text-lg font-bold hover:text-gray-600 transition-colors duration-200"
+              >
+                View Courses
+              </a>
+            </>
+          )}
+          {/* Placeholder anchor tags to maintain structure */}
+          {role !== "admin" && (
+            <>
+              <a
+                href="#"
+                className="text-lg font-bold opacity-0 pointer-events-none"
+              >
+                View Students
+              </a>
+              <a
+                href="#"
+                className="text-lg font-bold opacity-0 pointer-events-none"
+              >
+                View Courses
+              </a>
+            </>
+          )}
+        </div>
         <div className="relative">
           <button
             onClick={handleProfileClicked}

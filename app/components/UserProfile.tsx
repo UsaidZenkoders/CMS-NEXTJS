@@ -3,12 +3,12 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie";
+import { deleteCookie } from "cookies-next";
 
 interface UserProfileProps {
-  token: string | null;
-  role: string | null;
-  email: string | null;
+  token: string | undefined;
+  role: string | undefined;
+  email: string | undefined;
   setLogout: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -21,10 +21,14 @@ const UserProfile: React.FC<UserProfileProps> = ({
   const router = useRouter();
 
   const handleLogout = () => {
-    Cookies.remove("accessToken");
-    Cookies.remove("email");
-    Cookies.remove("role");
-    setLogout(true); 
+    
+    deleteCookie("accessToken");
+    deleteCookie("role");
+    deleteCookie("email");
+
+  
+    setLogout(true);
+    toast.success("Logged out successfuly")
     router.push("/Auth/login")
       
   };
@@ -37,7 +41,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
           className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
         >
           <li>
-            <a className="justify-between">Profile</a>
+            <p className="justify-between">Profile</p>
           </li>
           <li>
             <button onClick={handleLogout}>Logout</button>

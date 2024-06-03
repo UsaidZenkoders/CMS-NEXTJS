@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { CourseProvider } from "./Context/CourseContext";
+import { getCookie } from "cookies-next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +18,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
+  const token = getCookie("accessToken");
+  const email =  getCookie("email");
+  const role =  getCookie("role");
+
+  console.log({token, email, role})
   return (
     <html lang="en" data-theme="winter" className="">
       <body
